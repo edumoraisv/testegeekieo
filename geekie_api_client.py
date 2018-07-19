@@ -12,6 +12,7 @@ class GeekieAPIClient:
 
     def __init__(self, shared_secret):
         self.shared_secret = shared_secret
+        self.base_url = "http://api.geekielab.com.br"
 
     def who_am_i(self, organization_id):
         url = "GET /organizations/{}/who-am-i".format(organization_id)
@@ -31,7 +32,10 @@ class GeekieAPIClient:
         }
 
         response = requests.get(
-            "http://api.geekielab.com.br/organizations/{}/who-am-i".format(organization_id),
+            "{}/organizations/{}/who-am-i".format(
+                self.base_url,
+                organization_id,
+            ),
             headers=headers
         )
 
@@ -58,7 +62,10 @@ class GeekieAPIClient:
         }
 
         response = requests.get(
-            "http://api.geekielab.com.br/organizations/{}/members/list?limit=200".format(organization_id),
+            "{}/organizations/{}/members/list?limit=200".format(
+                self.base_url,
+                organization_id,
+            ),
             headers=headers
         )
 
@@ -85,7 +92,8 @@ class GeekieAPIClient:
         }
 
         response = requests.get(
-            "http://api.geekielab.com.br/organizations/{}/members/by-external-id/{}".format(
+            "{}/organizations/{}/members/by-external-id/{}".format(
+                self.base_url,
                 organization_id,
                 external_id,
             ),
@@ -122,7 +130,10 @@ class GeekieAPIClient:
         }
 
         response = requests.post(
-            "http://api.geekielab.com.br/organizations/{}/members".format(organization_id),
+            "{}/organizations/{}/members".format(
+                self.base_url,
+                organization_id,
+            ),
             headers=headers,
             data=json.dumps(request_body)
         )
@@ -156,7 +167,8 @@ class GeekieAPIClient:
         }
 
         response = requests.put(
-            "http://api.geekielab.com.br/organizations/{}/members/by-external-id/{}".format(
+            "{}/organizations/{}/members/by-external-id/{}".format(
+                self.base_url,
                 organization_id,
                 external_id,
             ),

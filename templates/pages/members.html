@@ -14,9 +14,11 @@
     <span>{{ membership["email"] }}</span>
     <span>{{ membership["external_id"] }}</span>
     <span>{{ membership["deleted"] }}</span>
-    <a href="{{ url_for('edit_membership', organization_id=organization_id, membership_id=membership["external_id"]) }}">
-      edit
-    </a>
+    {% if membership["external_id"] %}
+      <a href="{{ url_for('edit_membership', organization_id=organization_id, membership_id=membership["external_id"]) }}">
+        edit
+      </a>
+    {% endif %}
     <form action="https://www.geekielab.com.br/login/launch" method="POST">
       {% for param, value in oauth_params.get(membership["id"], {}).iteritems() %}
         <input type="hidden" name="{{ param }}" value="{{ value }}" />
