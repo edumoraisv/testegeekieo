@@ -74,8 +74,8 @@ class GeekieAPIClient:
 
         return response.json()
 
-    def get_membership(self, organization_id, external_id):
-        url = "GET /organizations/{}/members/by-external-id/{}".format(organization_id, external_id)
+    def get_membership(self, organization_id, membership_id):
+        url = "GET /organizations/{}/members/{}?include_deleted=true".format(organization_id, membership_id)
 
         current_time = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
@@ -92,7 +92,39 @@ class GeekieAPIClient:
         }
 
         response = requests.get(
-            "{}/organizations/{}/members/by-external-id/{}".format(
+            "{}/organizations/{}/members/{}?include_deleted=true".format(
+                self.base_url,
+                organization_id,
+                membership_id,
+            ),
+            headers=headers
+        )
+
+        if not response.status_code == 200:
+            return {}
+
+        return response.json()
+
+
+    def get_membership_by_external_id(self, organization_id, external_id):
+        url = "GET /organizations/{}/members/by-external-id/{}?include_deleted=true".format(organization_id, external_id)
+
+        current_time = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+        digest = hashlib.sha1("").hexdigest()
+
+        request_representation = url + "\n" + current_time + "\n" + digest + "\n"
+
+        signed_request = hmac.new(self.shared_secret, request_representation, hashlib.sha1).hexdigest()
+
+        headers = {
+            "Content-Type": "application/json",
+            "X-Geekie-Requested-At": current_time,
+            "X-Geekie-Signature": signed_request
+        }
+
+        response = requests.get(
+            "{}/organizations/{}/members/by-external-id/{}?include_deleted=true".format(
                 self.base_url,
                 organization_id,
                 external_id,
