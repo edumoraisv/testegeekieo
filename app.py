@@ -113,11 +113,13 @@ def update_membership(organization_id, membership_id):
         "full_name": form_data["full_name"],
         "roles": form_data["roles"].split(", "),
         "tags": form_data["tags"].split(", "),
+        "deleted": form_data.get("deleted", "false"),
+        "external_id": form_data["external_id"],
     }
 
     api_client.update_membership(
         organization_id=organization_id,
-        external_id=membership_id,
+        membership_id=membership_id,
         membership_data=membership_data,
     )
 
