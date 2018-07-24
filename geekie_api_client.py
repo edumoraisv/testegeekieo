@@ -44,6 +44,37 @@ class GeekieAPIClient:
 
         return response.json()
 
+    def get_tag_by_id(self, organization_id, tag_id):
+        url = "GET /organizations/{}/tags/{}".format(organization_id, tag_id)
+
+        current_time = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+        digest = hashlib.sha1("").hexdigest()
+
+        request_representation = url + "\n" + current_time + "\n" + digest + "\n"
+
+        signed_request = hmac.new(self.shared_secret, request_representation, hashlib.sha1).hexdigest()
+
+        headers = {
+            "Content-Type": "application/json",
+            "X-Geekie-Requested-At": current_time,
+            "X-Geekie-Signature": signed_request
+        }
+
+        response = requests.get(
+            "{}/organizations/{}/tags/{}".format(
+                self.base_url,
+                organization_id,
+                tag_id,
+            ),
+            headers=headers
+        )
+
+        if not response.status_code == 200:
+            return {}
+
+        return response.json()
+
     def get_all_memberships(self, organization_id):
         url = "GET /organizations/{}/members/list?limit=200".format(organization_id)
 
