@@ -47,6 +47,30 @@ class GeekieAPIClient:
 
         return response.json()
 
+    def update_tag_by_id(self, organization_id, tag_id, name, deleted=None):
+        url = "PUT /organizations/{}/tags/{}".format(organization_id, tag_id)
+
+        request_body = {
+            "name": name,
+            "deleted": deleted,
+        }
+
+        headers = self._get_authenticated_headers(url, request_body)
+        response = requests.put(
+            "{}/organizations/{}/tags/{}".format(
+                self.base_url,
+                organization_id,
+                tag_id,
+            ),
+            headers=headers,
+            data=json.dumps(request_body)
+        )
+
+        if not response.status_code == 200 and not response.status_code == 201:
+            return {}
+
+        return response.json()
+
     def get_all_memberships(self, organization_id):
         url = "GET /organizations/{}/members/list?limit=200".format(organization_id)
         headers = self._get_authenticated_headers(url)
@@ -125,7 +149,7 @@ class GeekieAPIClient:
             data=json.dumps(request_body)
         )
 
-        if not response.status_code == 200 or not response.status_code == 201:
+        if not response.status_code == 200 and not response.status_code == 201:
             return {}
 
         return response.json()
@@ -155,7 +179,7 @@ class GeekieAPIClient:
             data=json.dumps(request_body)
         )
 
-        if not response.status_code == 200 or not response.status_code == 201:
+        if not response.status_code == 200 and not response.status_code == 201:
             return {}
 
         return response.json()
@@ -182,7 +206,7 @@ class GeekieAPIClient:
             data=json.dumps(request_body)
         )
 
-        if not response.status_code == 200 or not response.status_code == 201:
+        if not response.status_code == 200 and not response.status_code == 201:
             return {}
 
         return response.json()
@@ -196,7 +220,6 @@ class GeekieAPIClient:
         digest = hashlib.sha1(body_as_json).hexdigest()
 
         request_representation = url + "\n" + current_time + "\n" + digest + "\n"
-
         signed_request = hmac.new(
             self.shared_secret,
             request_representation,
